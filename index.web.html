@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Advanced To Do List</title>
+
+<style>
+
+body{
+font-family: Arial;
+background: linear-gradient(135deg,#4facfe,#00f2fe);
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.container{
+background:white;
+padding:25px;
+width:400px;
+border-radius:10px;
+box-shadow:0 10px 20px rgba(0,0,0,0.2);
+}
+
+h1{
+text-align:center;
+}
+
+.input-section{
+display:flex;
+gap:10px;
+}
+
+input{
+flex:1;
+padding:10px;
+border-radius:5px;
+border:1px solid #ccc;
+}
+
+button{
+padding:10px;
+border:none;
+border-radius:5px;
+cursor:pointer;
+}
+
+.addBtn{
+background:#28a745;
+color:white;
+}
+
+.clearBtn{
+background:#dc3545;
+color:white;
+width:100%;
+margin-top:10px;
+}
+
+ul{
+list-style:none;
+padding:0;
+margin-top:20px;
+}
+
+li{
+padding:10px;
+background:#f2f2f2;
+margin-bottom:10px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-radius:5px;
+}
+
+.completed{
+text-decoration:line-through;
+color:gray;
+}
+
+.deleteBtn{
+background:red;
+color:white;
+border:none;
+padding:5px 8px;
+border-radius:3px;
+cursor:pointer;
+}
+
+.counter{
+margin-top:10px;
+font-size:14px;
+text-align:center;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>My To-Do List</h1>
+
+<div class="input-section">
+<input type="text" id="taskInput" placeholder="Enter a task">
+<button class="addBtn" onclick="addTask()">Add</button>
+</div>
+
+<ul id="taskList"></ul>
+
+<div class="counter">
+Tasks: <span id="taskCount">0</span>
+</div>
+
+<button class="clearBtn" onclick="clearTasks()">Clear All Tasks</button>
+
+</div>
+
+<script>
+
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+function displayTasks(){
+
+let list = document.getElementById("taskList");
+list.innerHTML="";
+
+tasks.forEach((task,index)=>{
+
+let li=document.createElement("li");
+
+li.textContent=task.text;
+
+if(task.completed){
+li.classList.add("completed");
+}
+
+li.onclick=function(){
+task.completed=!task.completed;
+saveTasks();
+displayTasks();
+}
+
+let del=document.createElement("button");
+del.textContent="Delete";
+del.className="deleteBtn";
+
+del.onclick=function(e){
+e.stopPropagation();
+tasks.splice(index,1);
+saveTasks();
+displayTasks();
+}
+
+li.appendChild(del);
+list.appendChild(li);
+
+});
+
+document.getElementById("taskCount").textContent=tasks.length;
+
+}
+
+function addTask(){
+
+let input=document.getElementById("taskInput");
+
+if(input.value===""){
+alert("Enter a task");
+return;
+}
+
+tasks.push({
+text:input.value,
+completed:false
+});
+
+input.value="";
+
+saveTasks();
+displayTasks();
+
+}
+
+function clearTasks(){
+
+tasks=[];
+saveTasks();
+displayTasks();
+
+}
+
+function saveTasks(){
+localStorage.setItem("tasks",JSON.stringify(tasks));
+}
+
+displayTasks();
+
+</script>
+
+</body>
+</html>
